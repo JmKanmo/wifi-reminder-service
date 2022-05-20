@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="util.ConfigUtilTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-05-20T12:50:19" hostname="DESKTOP-GK5I9BP" time="0.001">
-  <properties/>
-  <testcase name="yamlConfigTest()" classname="util.ConfigUtilTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
