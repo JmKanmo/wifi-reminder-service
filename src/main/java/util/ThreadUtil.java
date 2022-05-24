@@ -1,20 +1,23 @@
 package util;
 
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.*;
 
 public class ThreadUtil {
-    private static final ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-    public static <T> Optional<T> startWork(Callable<T> callable) {
-        try {
-            Future<T> respFuture = threadPoolExecutor.submit(callable);
-            T respStr = respFuture.get(ConfigUtil.getWorkConfig().getTimeUnit(), TimeUnit.SECONDS);
-            return Optional.ofNullable(respStr);
-        } catch (Exception e) {
-            // TODO 로그 출력
-            e.printStackTrace();
+    private static final ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(ConfigUtil.getWorkConfig().getWorkCount(), new ThreadFactory() {
+        @Override
+        public Thread newThread(@NotNull Runnable r) {
+            Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
         }
-        return Optional.empty();
+    });
+
+    private ThreadUtil() {
+    }
+
+    public static ExecutorService getThreadPoolExecutor() {
+        return threadPoolExecutor;
     }
 }

@@ -19,6 +19,10 @@ class ConfigUtilTest {
 
         assertNotNull(ConfigUtil.getWorkConfig());
         assertNotEquals(ConfigUtil.getWorkConfig().getWorkCount(), 0);
-        assertNotEquals(ConfigUtil.getWorkConfig().getTimeUnit(),0);
+        assertNotEquals(ConfigUtil.getWorkConfig().getTimeUnit(), 0);
+
+        assertNotNull(ConfigUtil.getDbConfig());
+        assertNotNull(ConfigUtil.getDbConfig().getName());
+        assertNotNull(ConfigUtil.getDbConfig().getPath());
     }
 }

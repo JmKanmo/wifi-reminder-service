@@ -7,6 +7,8 @@ api:
 
 work:
   workCount: 15
-  timeUnit: 5
+  timeUnit: 180
 
-
+db:
+  name: org.sqlite.JDBC
+  path: jdbc:sqlite:wifi-alarm.db
