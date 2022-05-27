@@ -7,6 +7,7 @@ import util.SqlUtil;
 import util.Util;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -96,24 +97,24 @@ public class SqliteDao {
 
             while (resultSet.next()) {
                 WifiInfo wifiInfo = WifiInfo.builder()
-                        .distance(resultSet.getDouble("distance"))
-                        .adminNumber(resultSet.getString("adminNumber"))
-                        .borough(resultSet.getString("borough"))
-                        .wifiName(resultSet.getString("wifiName"))
-                        .loadName(resultSet.getString("loadName"))
-                        .detailAddress(resultSet.getString("detailAddress"))
-                        .installPosition(resultSet.getString("installPosition"))
-                        .installType(resultSet.getString("installType"))
-                        .installAgency(resultSet.getString("installAgency"))
-                        .serviceType(resultSet.getString("serviceType"))
-                        .netType(resultSet.getString("netType"))
-                        .installYear(resultSet.getInt("installYear"))
-                        .inOutDoorType(resultSet.getString("inOutDoorType"))
-                        .wifiConnEnv(resultSet.getString("wifiConnEnv"))
+                        .distance(resultSet.getDouble(WifiInfo.WifiEnum.DISTANCE))
+                        .adminNumber(resultSet.getString(WifiInfo.WifiEnum.ADMIN_NUMBER))
+                        .borough(resultSet.getString(WifiInfo.WifiEnum.BOROUGH))
+                        .wifiName(resultSet.getString(WifiInfo.WifiEnum.WIFI_NAME))
+                        .loadName(resultSet.getString(WifiInfo.WifiEnum.LOAD_NAME))
+                        .detailAddress(resultSet.getString(WifiInfo.WifiEnum.DETAIL_ADDRESS))
+                        .installPosition(resultSet.getString(WifiInfo.WifiEnum.INSTALL_POSITION))
+                        .installType(resultSet.getString(WifiInfo.WifiEnum.INSTALL_TYPE))
+                        .installAgency(resultSet.getString(WifiInfo.WifiEnum.INSTALL_AGENCY))
+                        .serviceType(resultSet.getString(WifiInfo.WifiEnum.SERVICE_TYPE))
+                        .netType(resultSet.getString(WifiInfo.WifiEnum.NET_TYPE))
+                        .installYear(resultSet.getInt(WifiInfo.WifiEnum.INSTALL_YEAR))
+                        .inOutDoorType(resultSet.getString(WifiInfo.WifiEnum.INOUT_DOOR_TYPE))
+                        .wifiConnEnv(resultSet.getString(WifiInfo.WifiEnum.WIFI_CONN_ENV))
                         .locationDate(LocationDate.builder()
-                                .posX(resultSet.getDouble("posX"))
-                                .posY(resultSet.getDouble("posY"))
-                                .dateTime(Util.formatTimeStr(resultSet.getString("dateTime")))
+                                .posX(resultSet.getDouble(WifiInfo.WifiEnum.POS_X))
+                                .posY(resultSet.getDouble(WifiInfo.WifiEnum.POS_Y))
+                                .dateTime(Util.formatTimeStr(resultSet.getString(WifiInfo.WifiEnum.DATE_TIME)))
                                 .build())
                         .build();
                 wifiInfoList.add(wifiInfo);
@@ -122,6 +123,51 @@ public class SqliteDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    public Optional<List<LocationDate>> searchLocationHistoryInfos() {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_LOCATION_HISTORY_SQL)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<LocationDate> locationDateList = new ArrayList<>();
+
+            while (resultSet.next()) {
+                LocationDate locationDate = LocationDate.builder()
+                        .id(resultSet.getInt(LocationDate.LocationDateEnum.ID))
+                        .posX(resultSet.getDouble(LocationDate.LocationDateEnum.POS_X))
+                        .posY(resultSet.getDouble(LocationDate.LocationDateEnum.POS_Y))
+                        .dateTime(Util.formatTimeStr(resultSet.getString(LocationDate.LocationDateEnum.DATETIME)))
+                        .build();
+                locationDateList.add(locationDate);
+            }
+            return Optional.ofNullable(locationDateList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public int insertLocationInfo(double posX, double posY) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.INSERT_LOCATION_HISTORY_SQL)) {
+            int idx = 0;
+            preparedStatement.setDouble(++idx, posX);
+            preparedStatement.setDouble(++idx, posY);
+            preparedStatement.setString(++idx, Util.formatTimeStr(LocalDateTime.now()));
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int deleteLocationInfo(int id) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_LOCATION_HISTORY_SQL)) {
+            int idx = 0;
+            preparedStatement.setLong(++idx, id);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 

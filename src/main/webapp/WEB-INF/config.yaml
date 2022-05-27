@@ -1,0 +1,14 @@
+api:
+  url: http://openapi.seoul.go.kr:8088
+  name: TbPublicWifiInfo
+  key: 5665484f486e65623832534f515566
+  type: json
+  encoding: UTF-8
+
+work:
+  workCount: 15
+  timeUnit: 180
+
+db:
+  name: org.sqlite.JDBC
+  path: jdbc:sqlite:wifi-alarm.db

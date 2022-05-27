@@ -35,4 +35,24 @@ public class WifiInfo {
     private final String wifiConnEnv; // wifi 접속 환경
 
     private final LocationDate locationDate; // 위치 날짜 정보
+
+    public static class WifiEnum {
+        public static final String DISTANCE = "distance";
+        public static final String ADMIN_NUMBER = "adminNumber";
+        public static final String BOROUGH = "borough";
+        public static final String WIFI_NAME = "wifiName";
+        public static final String LOAD_NAME = "loadName";
+        public static final String DETAIL_ADDRESS = "detailAddress";
+        public static final String INSTALL_POSITION = "installPosition";
+        public static final String INSTALL_TYPE = "installType";
+        public static final String INSTALL_AGENCY = "installAgency";
+        public static final String SERVICE_TYPE = "serviceType";
+        public static final String NET_TYPE = "netType";
+        public static final String INSTALL_YEAR = "installYear";
+        public static final String INOUT_DOOR_TYPE = "inOutDoorType";
+        public static final String WIFI_CONN_ENV = "wifiConnEnv";
+        public static final String POS_X = "posX";
+        public static final String POS_Y = "posY";
+        public static final String DATE_TIME = "dateTime";
+    }
 }

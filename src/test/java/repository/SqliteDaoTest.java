@@ -1,5 +1,6 @@
 package repository;
 
+import domain.LocationDate;
 import domain.WifiInfo;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,16 +39,6 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(6)
-    public void dropTableTest() {
-        try (PreparedStatement preparedStatement = SqliteDao.getConnection().prepareStatement(SqlUtil.DROP_TABLE_SQL)) {
-            preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
     @Order(2)
     public void insertWifiInfosTest() {
         // TODO
@@ -63,17 +54,6 @@ class SqliteDaoTest {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            fail();
-        }
-    }
-
-    @Test
-    @Order(5)
-    public void deleteWifiInfoTest() {
-        try {
-            int deleteCnt = sqliteDao.deleteWifiInfo();
-            System.out.println("deleted wifi info : " + deleteCnt);
-        } catch (Exception e) {
             fail();
         }
     }
@@ -97,6 +77,82 @@ class SqliteDaoTest {
             assertEquals(wifiInfoList.get().size(), 20);
         } catch (Exception e) {
             e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    @Order(5)
+    public void deleteWifiInfoTest() {
+        try {
+            int deleteCnt = sqliteDao.deleteWifiInfo();
+            System.out.println("deleted wifi info : " + deleteCnt);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @Order(6)
+    public void insertLocationHistoryInfoTest() {
+        try {
+            int ret = sqliteDao.insertLocationInfo(126.89987, 37.554407);
+            assertEquals(ret, 1);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @Order(7)
+    public void deleteLocationHistoryInfoTest() {
+        try {
+            int ret = sqliteDao.deleteLocationInfo(1);
+            assertEquals(ret, 1);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @Order(8)
+    public void deleteLocationHistoryInfoTestById(int id) {
+        try {
+            int ret = sqliteDao.deleteLocationInfo(id);
+            assertEquals(ret, 1);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @Order(9)
+    public void searchLocationHistoryInfoTest() {
+        try {
+            Optional<List<LocationDate>> locationDateList = sqliteDao.searchLocationHistoryInfos();
+
+            assertEquals(locationDateList.isPresent(), true);
+
+            if (locationDateList.isPresent() && locationDateList.get().size() > 0) {
+                List<LocationDate> l = locationDateList.get();
+
+                for (LocationDate elem : l) {
+                    deleteLocationHistoryInfoTestById(elem.getId());
+                }
+            }
+            assertEquals(sqliteDao.searchLocationHistoryInfos().get().size(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    @Order(10)
+    public void dropTableTest() {
+        try (PreparedStatement preparedStatement = SqliteDao.getConnection().prepareStatement(SqlUtil.DROP_TABLE_SQL)) {
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
             fail();
         }
     }

@@ -27,14 +27,16 @@ public class SqlUtil {
                     + " posY DOUBLE NOT NULL," + "\n"
                     + " dateTime DATETIME NOT NULL);";
 
-    public static final String DROP_TABLE_SQL = "DROP TABLE WIFI_INFO";
+    public static final String DROP_TABLE_SQL = "DROP TABLE WIFI_INFO" + "\n\n"  + "DROP TABLE LOCATION_HISTORY";
     public static final String INSERT_WIFI_INFO_SQL = "INSERT INTO WIFI_INFO(adminNumber, borough, wifiName, " +
             "loadName, detailAddress, installPosition, installType, installAgency, serviceType, netType, " +
             "installYear, inOutDoorType, wifiConnEnv, posX, posY, dateTime) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    public static final String INSERT_LOCATION_HISTORY_SQL = "INSERT INTO LOCATION_HISTORY(posX,posY,dateTime) VALUES(?,?,?,?)";
+    public static final String INSERT_LOCATION_HISTORY_SQL = "INSERT INTO LOCATION_HISTORY(posX,posY,dateTime) VALUES(?,?,?)";
 
     public static final String DELETE_WIFI_INFO_SQL = "DELETE FROM WIFI_INFO";
+
+    public static final String DELETE_LOCATION_HISTORY_SQL = "DELETE FROM LOCATION_HISTORY WHERE id=?";
     public static final String SELECT_PAGE_WIFI_INFO_SQL = "select round(sqrt(power((posY - ?), 2) + power(posX - ?, 2)) * 100, 4) as distance,\n" +
             "       adminNumber,\n" +
             "       borough,\n" +
@@ -58,6 +60,7 @@ public class SqlUtil {
 
     public static final String SELECT_COUNT_WIFI_INFO_SQL = "SELECT COUNT(*) AS COUNT FROM WIFI_INFO";
 
+    public static final String SELECT_LOCATION_HISTORY_SQL = "SELECT * FROM LOCATION_HISTORY";
     private SqlUtil() {
     }
 }
