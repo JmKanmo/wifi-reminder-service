@@ -9,16 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class WifiInfoController extends HttpServlet {
+public class LoadWifiInfoController extends HttpServlet {
     private final PublicWifiService publicWifiService = new PublicWifiService();
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/load-wifi.jsp");
-        requestDispatcher.forward(req, resp);
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("wifi info");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/load-wifi.jsp");
+        requestDispatcher.forward(req, resp);
     }
 }

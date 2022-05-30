@@ -15,6 +15,16 @@
         <servlet-class>controller.WifiInfoController</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>load-wifi</servlet-name>
+        <servlet-class>controller.LoadWifiInfoController</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>main</servlet-name>
+        <servlet-class>controller.MainController</servlet-class>
+    </servlet>
+
     <!-- 2. 매핑 -->
     <servlet-mapping>
         <servlet-name>location</servlet-name>
@@ -22,7 +32,18 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>main</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>wifi</servlet-name>
         <url-pattern>/wifi</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet-mapping>
+        <servlet-name>load-wifi</servlet-name>
+        <url-pattern>/load-wifi</url-pattern>
     </servlet-mapping>
 </web-app>

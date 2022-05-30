@@ -16,7 +16,8 @@ public class LocationDateController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO service 수행 후, 결과 리스트 값 반환
         // TODO 위치 히스토리 목록 jsp 뷰 반환
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/views/location-history.jsp");
+        System.out.println("hello world");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/location-history.jsp");
         requestDispatcher.forward(req, resp);
     }
 
