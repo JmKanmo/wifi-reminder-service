@@ -7,5 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Db {
     private String name;
-    private String path;
+    private String user;
+    private String password;
+    private String url;
 }

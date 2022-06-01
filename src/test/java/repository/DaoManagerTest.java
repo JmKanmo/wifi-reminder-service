@@ -2,11 +2,9 @@ package repository;
 
 import domain.LocationDate;
 import domain.WifiInfo;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import service.PublicWifiService;
 import util.SqlUtil;
-import util.Util;
 
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -17,14 +15,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SqliteDaoTest {
-    private final SqliteDao sqliteDao = new SqliteDao();
+class DaoManagerTest {
+    private final DaoManager daoManager = new DaoManager();
 
     @Test
-    @Order(1)
     public void createTableTest() {
         try {
-            DatabaseMetaData databaseMetaData = SqliteDao.getConnection().getMetaData();
+            DatabaseMetaData databaseMetaData = ConnManager.getConnection().getMetaData();
             ResultSet resultSet = databaseMetaData.getTables(null, null, "WIFI_INFO", null);
             assertEquals(resultSet.next(), true);
 
@@ -39,12 +36,11 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(2)
     public void insertWifiInfosTest() {
         // TODO
         int reqCnt = new PublicWifiService().requestWifiApiService();
 
-        try (PreparedStatement preparedStatement = SqliteDao.getConnection().prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             int rowCnt = resultSet.getInt("COUNT");
 
@@ -59,20 +55,18 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(3)
     public void checkWifiInfoExistTest() {
         try {
-            assertEquals(sqliteDao.checkWifiInfoExist(), true);
+            assertEquals(daoManager.checkWifiInfoExist(), true);
         } catch (Exception e) {
             fail();
         }
     }
 
     @Test
-    @Order(4)
     public void wifiInfoSelectPageTest() {
         try {
-            Optional<List<WifiInfo>> wifiInfoList = sqliteDao.searchNearestWifiInfo(126.89987, 37.554407, 1, 20);
+            Optional<List<WifiInfo>> wifiInfoList = daoManager.searchNearestWifiInfo(126.89987, 37.554407, 1, 20);
             assertEquals(wifiInfoList.isPresent(), true);
             assertEquals(wifiInfoList.get().size(), 20);
         } catch (Exception e) {
@@ -82,10 +76,9 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(5)
     public void deleteWifiInfoTest() {
         try {
-            int deleteCnt = sqliteDao.deleteWifiInfo();
+            int deleteCnt = daoManager.deleteWifiInfo();
             System.out.println("deleted wifi info : " + deleteCnt);
         } catch (Exception e) {
             fail();
@@ -93,21 +86,20 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(6)
     public void insertLocationHistoryInfoTest() {
         try {
-            int ret = sqliteDao.insertLocationInfo(126.89987, 37.554407);
+            int ret = daoManager.insertLocationInfo(37.552128, 126.8580352);
             assertEquals(ret, 1);
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
 
     @Test
-    @Order(7)
     public void deleteLocationHistoryInfoTest() {
         try {
-            int ret = sqliteDao.deleteLocationInfo(1);
+            int ret = daoManager.deleteLocationInfo(1);
             assertEquals(ret, 1);
         } catch (Exception e) {
             fail();
@@ -115,21 +107,20 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(8)
     public void deleteLocationHistoryInfoTestById(int id) {
         try {
-            int ret = sqliteDao.deleteLocationInfo(id);
+            int ret = daoManager.deleteLocationInfo(id);
             assertEquals(ret, 1);
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
 
     @Test
-    @Order(9)
     public void searchLocationHistoryInfoTest() {
         try {
-            Optional<List<LocationDate>> locationDateList = sqliteDao.searchLocationHistoryInfos();
+            Optional<List<LocationDate>> locationDateList = daoManager.searchLocationHistoryInfos();
 
             assertEquals(locationDateList.isPresent(), true);
 
@@ -140,7 +131,7 @@ class SqliteDaoTest {
                     deleteLocationHistoryInfoTestById(elem.getId());
                 }
             }
-            assertEquals(sqliteDao.searchLocationHistoryInfos().get().size(), 0);
+            assertEquals(daoManager.searchLocationHistoryInfos().get().size(), 0);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -148,11 +139,18 @@ class SqliteDaoTest {
     }
 
     @Test
-    @Order(10)
     public void dropTableTest() {
-        try (PreparedStatement preparedStatement = SqliteDao.getConnection().prepareStatement(SqlUtil.DROP_TABLE_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DROP_WIFI_INFO_TABLE_SQL)) {
             preparedStatement.executeUpdate();
         } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DROP_LOCATION_HISTORY_INFO_TABLE_SQL)) {
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }

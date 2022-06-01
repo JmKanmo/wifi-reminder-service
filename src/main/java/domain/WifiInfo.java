@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class WifiInfo {
-    private final Double distance; // 거리
+    private Double distance; // 거리
 
     private final String adminNumber; // 관리 번호
 

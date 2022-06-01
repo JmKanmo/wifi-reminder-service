@@ -23,6 +23,19 @@ class ConfigUtilTest {
 
         assertNotNull(ConfigUtil.getDbConfig());
         assertNotNull(ConfigUtil.getDbConfig().getName());
-        assertNotNull(ConfigUtil.getDbConfig().getPath());
+        assertNotNull(ConfigUtil.getDbConfig().getUrl());
+        assertNotNull(ConfigUtil.getDbConfig().getPassword());
+        assertNotNull(ConfigUtil.getDbConfig().getUser());
+
+        assertNotNull(ConfigUtil.getDbPoolConfig());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getPoolName());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getMaxPoolSize());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getMinPoolSize());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getPoolValidMinDelay());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getRegisterJmxPool());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getUseResetConnection());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getStaticGlobal());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getMaxIdleTime());
+        assertNotNull(ConfigUtil.getDbPoolConfig().getConnTimeOut());
     }
 }

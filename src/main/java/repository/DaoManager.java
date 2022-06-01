@@ -2,7 +2,6 @@ package repository;
 
 import domain.LocationDate;
 import domain.WifiInfo;
-import util.ConfigUtil;
 import util.SqlUtil;
 import util.Util;
 
@@ -12,24 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SqliteDao {
-    private static Connection connection;
-
-    static {
-        try {
-            // DB 연결 & 테이블 생성
-            Class.forName(ConfigUtil.getDbConfig().getName());
-            connection = DriverManager.getConnection(ConfigUtil.getDbConfig().getPath());
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(SqlUtil.CREATE_TABLE_SQL);
-            statement.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+public class DaoManager {
     public int insertWifiInfos(List<WifiInfo> wifiInfoList) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.INSERT_WIFI_INFO_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.INSERT_WIFI_INFO_SQL)) {
             for (WifiInfo wifiInfo : wifiInfoList) {
                 int idx = 0;
                 preparedStatement.setString(++idx, wifiInfo.getAdminNumber());
@@ -47,13 +31,13 @@ public class SqliteDao {
                 preparedStatement.setString(++idx, wifiInfo.getWifiConnEnv());
                 preparedStatement.setDouble(++idx, wifiInfo.getLocationDate().getPosX());
                 preparedStatement.setDouble(++idx, wifiInfo.getLocationDate().getPosY());
-                preparedStatement.setString(++idx, Util.formatTimeStr(wifiInfo.getLocationDate().getDateTime()));
+                preparedStatement.setString(++idx, wifiInfo.getLocationDate().getDateTime());
 
                 preparedStatement.addBatch();
                 preparedStatement.clearParameters();
             }
             preparedStatement.executeBatch();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -61,28 +45,28 @@ public class SqliteDao {
     }
 
     public int deleteWifiInfo() {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_WIFI_INFO_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DELETE_WIFI_INFO_SQL)) {
             return preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             return 0;
         }
     }
 
     public boolean checkWifiInfoExist() {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int cnt = resultSet.getInt("COUNT");
                 return cnt > 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public Optional<List<WifiInfo>> searchNearestWifiInfo(double posX, double posY, int offset, int cnt) {
-        try (PreparedStatement preparedStatement = SqliteDao.getConnection().prepareStatement(SqlUtil.SELECT_PAGE_WIFI_INFO_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_PAGE_WIFI_INFO_SQL)) {
             int idx = 0;
 
             preparedStatement.setDouble(++idx, posY);
@@ -114,20 +98,19 @@ public class SqliteDao {
                         .locationDate(LocationDate.builder()
                                 .posX(resultSet.getDouble(WifiInfo.WifiEnum.POS_X))
                                 .posY(resultSet.getDouble(WifiInfo.WifiEnum.POS_Y))
-                                .dateTime(Util.formatTimeStr(resultSet.getString(WifiInfo.WifiEnum.DATE_TIME)))
+                                .dateTime(resultSet.getString(WifiInfo.WifiEnum.DATE_TIME))
                                 .build())
                         .build();
                 wifiInfoList.add(wifiInfo);
             }
             return Optional.ofNullable(wifiInfoList);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Optional.empty();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     public Optional<List<LocationDate>> searchLocationHistoryInfos() {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_LOCATION_HISTORY_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_LOCATION_HISTORY_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<LocationDate> locationDateList = new ArrayList<>();
 
@@ -136,52 +119,38 @@ public class SqliteDao {
                         .id(resultSet.getInt(LocationDate.LocationDateEnum.ID))
                         .posX(resultSet.getDouble(LocationDate.LocationDateEnum.POS_X))
                         .posY(resultSet.getDouble(LocationDate.LocationDateEnum.POS_Y))
-                        .dateTime(Util.formatTimeStr(resultSet.getString(LocationDate.LocationDateEnum.DATETIME)))
+                        .dateTime(resultSet.getString(LocationDate.LocationDateEnum.DATETIME))
                         .build();
                 locationDateList.add(locationDate);
             }
             return Optional.ofNullable(locationDateList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }
     }
 
     public int insertLocationInfo(double posX, double posY) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.INSERT_LOCATION_HISTORY_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.INSERT_LOCATION_HISTORY_SQL)) {
             int idx = 0;
             preparedStatement.setDouble(++idx, posX);
             preparedStatement.setDouble(++idx, posY);
-            preparedStatement.setString(++idx, Util.formatTimeStr(LocalDateTime.now()));
+            preparedStatement.setString(++idx, Util.formatLocationHistoryDateTimeStr(LocalDateTime.now()));
             return preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
     }
 
     public int deleteLocationInfo(int id) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_LOCATION_HISTORY_SQL)) {
+        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DELETE_LOCATION_HISTORY_SQL)) {
             int idx = 0;
             preparedStatement.setLong(++idx, id);
             return preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    public static Connection getConnection() {
-        return connection;
-    }
-
-    public static void closeConnection() {
-        try {
-            if (connection.isClosed() != true) {
-                connection.close();
-            }
         } catch (Exception e) {
             e.printStackTrace();
+            return 0;
         }
     }
 }

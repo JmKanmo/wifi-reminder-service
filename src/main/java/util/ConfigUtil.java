@@ -4,6 +4,7 @@ import config.YamlConfig;
 import config.dto.Api;
 import config.YamlParser;
 import config.dto.Db;
+import config.dto.DbPool;
 import config.dto.Work;
 
 public class ConfigUtil {
@@ -19,5 +20,9 @@ public class ConfigUtil {
 
     public static Db getDbConfig() {
         return yamlConfig.getDb();
+    }
+
+    public static DbPool getDbPoolConfig() {
+        return yamlConfig.getDbPool();
     }
 }

@@ -14,15 +14,19 @@ public class LocationDateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO service 수행 후, 결과 리스트 값 반환
-        // TODO 위치 히스토리 목록 jsp 뷰 반환
-        System.out.println("hello world");
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/location-history.jsp");
+        req.setAttribute("location_history", locHistoryService.getLocationHistories());
         requestDispatcher.forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO 내 위치 가져오기 후, 위치(x,y) 값 insert 로직 수행
+        locHistoryService.insertLocHistoryInfo(Double.parseDouble(req.getParameter("xPos")),
+                Double.parseDouble(req.getParameter("yPos")));
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        locHistoryService.deleteLocHistoryInfo(Integer.parseInt(req.getParameter("id")));
     }
 }

@@ -37,7 +37,7 @@ public class JsonUtil {
                 LocationDate locationDate = LocationDate.builder()
                         .posX(Double.parseDouble(parseJsonObjToStr(jsonObj, "LAT", Double.class)))
                         .posY(Double.parseDouble(parseJsonObjToStr(jsonObj, "LNT", Double.class)))
-                        .dateTime(Util.formatTimeStr(parseJsonObjToStr(jsonObj, "WORK_DTTM")))
+                        .dateTime(Util.formatWifiDateTimeStr(parseJsonObjToStr(jsonObj, "WORK_DTTM")))
                         .build();
 
                 WifiInfo wifiInfo = WifiInfo.builder()

@@ -14,7 +14,7 @@ public class LocationDate {
 
     private final Double posY;
 
-    private final LocalDateTime dateTime;
+    private final String dateTime;
 
     public static class LocationDateEnum {
         public static final String ID = "id";
