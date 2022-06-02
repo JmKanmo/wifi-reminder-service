@@ -20,7 +20,7 @@ dbPool:
   poolName: wifi-service-db-pool
   maxPoolSize: 8
   minPoolSize: 8
-  poolValidMinDelay	: 1000
+  poolValidMinDelay: 1000
   maxIdleTime: 600
   connTimeOut: 30
   staticGlobal: false

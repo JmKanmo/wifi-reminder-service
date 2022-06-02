@@ -9,7 +9,6 @@ import util.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class PublicWifiService {
     private final DaoManager daoManager = new DaoManager();
@@ -110,11 +109,11 @@ public class PublicWifiService {
             search.get(ConfigUtil.getWorkConfig().getTimeUnit(), TimeUnit.SECONDS);
 
             return wifiInfoQueue.stream().sorted((a, b) -> {
-                        double distanceA = Util.calculateDistance(posX, a.getLocationDate().getPosX(), posY, a.getLocationDate().getPosY());
-                        double distanceB = Util.calculateDistance(posX, b.getLocationDate().getPosX(), posY, b.getLocationDate().getPosY());
+                        double distanceA = Util.calculateDistance(posX, posY, a.getLocationDate().getPosY(), a.getLocationDate().getPosX());
+                        double distanceB = Util.calculateDistance(posX, posY, b.getLocationDate().getPosY(), b.getLocationDate().getPosX());
                         return Double.compare(distanceA, distanceB);
                     }).limit(cnt).map(wifiInfo -> {
-                        wifiInfo.setDistance(Util.calculateDistance(posX, wifiInfo.getLocationDate().getPosX(), posY, wifiInfo.getLocationDate().getPosY()));
+                        wifiInfo.setDistance(Util.calculateDistance(posX, posY, wifiInfo.getLocationDate().getPosY(), wifiInfo.getLocationDate().getPosX()));
                         return wifiInfo;
                     })
                     .collect(Collectors.toList());

@@ -11,7 +11,7 @@ public class DbPool {
     private int minPoolSize;
     private int poolValidMinDelay;
     private int maxIdleTime;
-    private int connTimeOut = 30;
+    private int connTimeOut;
     private String staticGlobal;
     private String useResetConnection;
     private String registerJmxPool;

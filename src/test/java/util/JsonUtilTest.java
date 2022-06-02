@@ -12,7 +12,7 @@ class JsonUtilTest {
     @Test
     void parseStrToJsonObject() throws IOException {
         // 순서가 MAX 를 넘어가는 경우
-        String jsonStr = HttpUtil.sendHttpRequest(0, 16000);
+        String jsonStr = HttpUtil.sendHttpRequest(1, 1000);
         JsonObject jsonObject = JsonUtil.parseStrToJsonObject(jsonStr);
         assertEquals(jsonObject.get("RESULT").getAsJsonObject().get("CODE").getAsString(), "INFO-200");
         assertEquals(JsonUtil.parseJsonToWifiInfo(jsonObject).isPresent(),false);

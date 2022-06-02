@@ -104,12 +104,12 @@
     </nav>
 
     <form class="location_form" action="/location" method="POST">
-        <label for="x-pos-name">LAT:</label>
+        <label for="x-pos-name">LAT(X):</label>
 
         <input type="number" id="x-pos-name" name="x-pos-name"
                class="input_form" placeholder="x좌표를 입력하세요."/>
 
-        <label for="y-pos-name">LAT:</label>
+        <label for="y-pos-name">LNT(Y):</label>
 
         <input type="number" id="y-pos-name" name="y-pos-name"
                class="input_form" placeholder="y좌표를 입력하세요."/>
@@ -357,7 +357,11 @@
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             xhr.addEventListener("loadend", event => {
-                const responseJSON = JSON.parse(event.target.responseText);
+                const responseJSON = JSON.parse(event.target.responseText).map(wifi => {
+                    let temp = wifi;
+                    temp["distance"] = temp["distance"].toFixed(4);
+                    return temp;
+                });
                 const wifiInfoTemplate = document.querySelector("#wifi-info-template").innerHTML;
                 const template = Handlebars.compile(wifiInfoTemplate);
                 const templateHTML = template({wifiInfoList: responseJSON});

@@ -69,10 +69,10 @@ public class DaoManager {
         try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_PAGE_WIFI_INFO_SQL)) {
             int idx = 0;
 
-            preparedStatement.setDouble(++idx, posY);
             preparedStatement.setDouble(++idx, posX);
             preparedStatement.setDouble(++idx, posY);
             preparedStatement.setDouble(++idx, posX);
+            preparedStatement.setDouble(++idx, posY);
             preparedStatement.setInt(++idx, offset);
             preparedStatement.setInt(++idx, cnt);
 
