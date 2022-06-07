@@ -109,11 +109,13 @@ public class PublicWifiService {
             search.get(ConfigUtil.getWorkConfig().getTimeUnit(), TimeUnit.SECONDS);
 
             return wifiInfoQueue.stream().sorted((a, b) -> {
-                        double distanceA = Util.calculateDistance(posX, posY, a.getLocationDate().getPosY(), a.getLocationDate().getPosX());
-                        double distanceB = Util.calculateDistance(posX, posY, b.getLocationDate().getPosY(), b.getLocationDate().getPosX());
+                        double distanceA = Util.calculateDistance(posX, posY, a.getLocationDate().getPosX(), a.getLocationDate().getPosY());
+                        double distanceB = Util.calculateDistance(posX, posY, b.getLocationDate().getPosX(), b.getLocationDate().getPosY());
                         return Double.compare(distanceA, distanceB);
                     }).limit(cnt).map(wifiInfo -> {
-                        wifiInfo.setDistance(Util.calculateDistance(posX, posY, wifiInfo.getLocationDate().getPosY(), wifiInfo.getLocationDate().getPosX()));
+                        double distance = Util.calculateDistance(posX, posY, wifiInfo.getLocationDate().getPosX(), wifiInfo.getLocationDate().getPosY());
+                        double rDistance = Math.round((distance / 1000) * 10000) / 10000.0;
+                        wifiInfo.setDistance(rDistance);
                         return wifiInfo;
                     })
                     .collect(Collectors.toList());

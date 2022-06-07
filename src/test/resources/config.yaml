@@ -13,16 +13,16 @@ db:
   name: org.mariadb.jdbc.Driver
   user: junmokang
   password: wnsah12
-  url: jdbc:mariadb://192.168.35.232:3306/jmshop_mariadb
+  url: jdbc:mariadb://192.168.35.232:3309/wifiservice_mariadb
 
 
 dbPool:
   poolName: wifi-service-db-pool
-  maxPoolSize: 8
-  minPoolSize: 8
+  maxPoolSize: 30
+  minPoolSize: 30
   poolValidMinDelay: 1000
-  connTimeOut: 30
   maxIdleTime: 600
+  connTimeOut: 180
   staticGlobal: false
   useResetConnection: false
   registerJmxPool: true

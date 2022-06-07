@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import service.PublicWifiService;
 import util.SqlUtil;
 
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +37,9 @@ class DaoManagerTest {
         // TODO
         int reqCnt = new PublicWifiService().requestWifiApiService();
 
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             int rowCnt = resultSet.getInt("COUNT");
 
@@ -140,14 +139,18 @@ class DaoManagerTest {
 
     @Test
     public void dropTableTest() {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DROP_WIFI_INFO_TABLE_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DROP_WIFI_INFO_TABLE_SQL)) {
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
             fail();
         }
 
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DROP_LOCATION_HISTORY_INFO_TABLE_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DROP_LOCATION_HISTORY_INFO_TABLE_SQL)) {
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

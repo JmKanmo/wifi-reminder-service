@@ -37,7 +37,8 @@ public class SqlUtil {
     public static final String DELETE_WIFI_INFO_SQL = "DELETE FROM WIFI_INFO";
 
     public static final String DELETE_LOCATION_HISTORY_SQL = "DELETE FROM LOCATION_HISTORY WHERE id=?";
-    public static final String SELECT_PAGE_WIFI_INFO_SQL = "select round(sqrt(power((posY - ?), 2) + power(posX - ?, 2)) * 100, 4) as distance,\n" +
+    public static final String SELECT_PAGE_WIFI_INFO_SQL = "SELECT round((6371 * acos(cos(radians(posX)) * cos(radians(?)) * cos(radians(?)\n" +
+            "    - radians(posY)) + sin(radians(posX)) * sin(radians(?)))) / 1000, 4) AS distance,\n" +
             "       adminNumber,\n" +
             "       borough,\n" +
             "       wifiName,\n" +
@@ -55,7 +56,8 @@ public class SqlUtil {
             "       posY,\n" +
             "       dateTime\n" +
             "from WIFI_INFO\n" +
-            "order by abs(sqrt(power((abs(posY - ?)), 2) + power((abs(posX - ?)), 2)))\n" +
+            "order by (6371 * acos(cos(radians(posX)) * cos(radians(?)) * cos(radians(?)\n" +
+            "    - radians(posY)) + sin(radians(posX)) * sin(radians(?))))\n" +
             "limit ?,?";
 
     public static final String SELECT_COUNT_WIFI_INFO_SQL = "SELECT COUNT(*) AS COUNT FROM WIFI_INFO";

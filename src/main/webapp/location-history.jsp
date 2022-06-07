@@ -86,13 +86,7 @@
         </li>
 
         <li>
-            <a href="/location">
-                위치 히스토리 목록
-            </a>
-        </li>
-
-        <li>
-            <a href="/load-wifi">
+            <a href="/load-wifi.jsp">
                 Open API 와이파이 정보 요청 및 저장
             </a>
         </li>

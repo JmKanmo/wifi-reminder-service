@@ -13,7 +13,9 @@ import java.util.Optional;
 
 public class DaoManager {
     public int insertWifiInfos(List<WifiInfo> wifiInfoList) {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.INSERT_WIFI_INFO_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.INSERT_WIFI_INFO_SQL)) {
             for (WifiInfo wifiInfo : wifiInfoList) {
                 int idx = 0;
                 preparedStatement.setString(++idx, wifiInfo.getAdminNumber());
@@ -45,7 +47,9 @@ public class DaoManager {
     }
 
     public int deleteWifiInfo() {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DELETE_WIFI_INFO_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_WIFI_INFO_SQL)) {
             return preparedStatement.executeUpdate();
         } catch (Exception e) {
             return 0;
@@ -53,7 +57,9 @@ public class DaoManager {
     }
 
     public boolean checkWifiInfoExist() {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_COUNT_WIFI_INFO_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int cnt = resultSet.getInt("COUNT");
@@ -66,13 +72,17 @@ public class DaoManager {
     }
 
     public Optional<List<WifiInfo>> searchNearestWifiInfo(double posX, double posY, int offset, int cnt) {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_PAGE_WIFI_INFO_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_PAGE_WIFI_INFO_SQL)) {
             int idx = 0;
 
             preparedStatement.setDouble(++idx, posX);
             preparedStatement.setDouble(++idx, posY);
             preparedStatement.setDouble(++idx, posX);
+            preparedStatement.setDouble(++idx, posX);
             preparedStatement.setDouble(++idx, posY);
+            preparedStatement.setDouble(++idx, posX);
             preparedStatement.setInt(++idx, offset);
             preparedStatement.setInt(++idx, cnt);
 
@@ -110,7 +120,9 @@ public class DaoManager {
     }
 
     public Optional<List<LocationDate>> searchLocationHistoryInfos() {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.SELECT_LOCATION_HISTORY_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.SELECT_LOCATION_HISTORY_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<LocationDate> locationDateList = new ArrayList<>();
 
@@ -131,7 +143,9 @@ public class DaoManager {
     }
 
     public int insertLocationInfo(double posX, double posY) {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.INSERT_LOCATION_HISTORY_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.INSERT_LOCATION_HISTORY_SQL)) {
             int idx = 0;
             preparedStatement.setDouble(++idx, posX);
             preparedStatement.setDouble(++idx, posY);
@@ -144,7 +158,9 @@ public class DaoManager {
     }
 
     public int deleteLocationInfo(int id) {
-        try (PreparedStatement preparedStatement = ConnManager.getConnection().prepareStatement(SqlUtil.DELETE_LOCATION_HISTORY_SQL)) {
+        try (
+                Connection connection = ConnManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_LOCATION_HISTORY_SQL)) {
             int idx = 0;
             preparedStatement.setLong(++idx, id);
             return preparedStatement.executeUpdate();
