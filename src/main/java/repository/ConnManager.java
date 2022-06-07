@@ -1,10 +1,12 @@
 package repository;
 
+import logger.LoggingController;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import util.ConfigUtil;
 import util.SqlUtil;
 
 import java.sql.*;
+import java.util.logging.Level;
 
 public class ConnManager {
     private static MariaDbPoolDataSource mariaDbPoolDataSource = new MariaDbPoolDataSource(ConfigUtil.getDbConfig().getUrl());
@@ -23,10 +25,10 @@ public class ConnManager {
                 wifiInfoPreparedStatement.executeUpdate();
                 locationHistoryInfoPreparedStatement.executeUpdate();
             } catch (Exception e) {
-                e.printStackTrace();
+                LoggingController.log(Level.INFO,"ConnManager:static initialize error occur => " + e);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO,"ConnManager:static initialize error occur => " + e);
         }
     }
 

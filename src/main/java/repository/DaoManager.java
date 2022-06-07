@@ -2,6 +2,7 @@ package repository;
 
 import domain.LocationDate;
 import domain.WifiInfo;
+import logger.LoggingController;
 import util.SqlUtil;
 import util.Util;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class DaoManager {
     public int insertWifiInfos(List<WifiInfo> wifiInfoList) {
@@ -40,7 +42,7 @@ public class DaoManager {
             }
             preparedStatement.executeBatch();
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "DaoManager:insertWifiInfos error occur => " + e);
             return 0;
         }
         return wifiInfoList.size();
@@ -52,6 +54,7 @@ public class DaoManager {
                 PreparedStatement preparedStatement = connection.prepareStatement(SqlUtil.DELETE_WIFI_INFO_SQL)) {
             return preparedStatement.executeUpdate();
         } catch (Exception e) {
+            LoggingController.log(Level.INFO, "DaoManager:deleteWifiInfo error occur => " + e);
             return 0;
         }
     }
@@ -66,7 +69,7 @@ public class DaoManager {
                 return cnt > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "DaoManager:checkWifiInfoExist error occur => " + e);
         }
         return false;
     }
@@ -137,7 +140,7 @@ public class DaoManager {
             }
             return Optional.ofNullable(locationDateList);
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "DaoManager:searchLocationHistoryInfos error occur => " + e);
             return Optional.empty();
         }
     }
@@ -152,7 +155,7 @@ public class DaoManager {
             preparedStatement.setString(++idx, Util.formatLocationHistoryDateTimeStr(LocalDateTime.now()));
             return preparedStatement.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "DaoManager:insertLocationInfo error occur => " + e);
             return 0;
         }
     }
@@ -165,7 +168,7 @@ public class DaoManager {
             preparedStatement.setLong(++idx, id);
             return preparedStatement.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "DaoManager:deleteLocationInfo error occur => " + e);
             return 0;
         }
     }

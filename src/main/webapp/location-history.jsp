@@ -15,8 +15,8 @@
           content="wifi 정보 제공 뷰입니다.">
     <meta name="viewport"
           content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
     <style type="text/css">
         html,
@@ -94,6 +94,10 @@
 </nav>
 
 <table class="location_info_table">
+    <%--  script template  --%>
+</table>
+
+<script id="location-history-template" type="text/x-handlebars-template">
     <tr class="location_info_table header">
         <td>
             <p>id</p>
@@ -116,36 +120,108 @@
         </td>
     </tr>
 
-    <c:forEach var="locationHistory" items="${location_history}">
-        <tr>
-            <td> ${locationHistory.id}</td>
-            <td> ${locationHistory.posX}</td>
-            <td> ${locationHistory.posY}</td>
-            <td> ${locationHistory.dateTime}</td>
-            <td>
-                <button onclick="initLocationColumnButtonListener(this)" type="button" id="locationButton"
-                        button-id="${locationHistory.id}">삭제
-                </button>
-            </td>
-        </tr>
-    </c:forEach>
-</table>
+    {{#each locationHistoryList}}
+    <tr>
+        <td> {{id}}</td>
+        <td> {{posX}}</td>
+        <td> {{posY}}</td>
+        <td> {{dateTime}}</td>
+        <td>
+            <button onclick="initLocationColumnButtonListener(this)" type="button" id="locationButton"
+                    button-id="{{id}}">삭제
+            </button>
+        </td>
+    </tr>
+    {{/each}}
+</script>
 
 <script type="text/javascript">
+    /** 오픈소스 참조 (로딩 중 화면 만들기) **/
+    function loadingWithMask() {
+        //화면 높이와 너비를 구합니다.
+        let maskHeight = $(document).height();
+        let maskWidth = window.document.body.clientWidth;
+        //출력할 마스크를 설정해준다.
+        let mask = "<div id='mask' style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0;'></div>";
+        // 로딩 이미지 주소 및 옵션
+        let loadingImg = '';
+        loadingImg += "<div id='loadingImg' style='position:absolute; top: calc(50% - (200px / 2)); width:100%; z-index:99999999;'>";
+        loadingImg += " <img src='https://loadingapng.com/animation.php?image=4&fore_color=000000&back_color=FFFFFF&size=128x128&transparency=1&image_type=0&uncacher=75.5975991029623' style='position: relative; display: block; margin: 0px auto;'/>";
+        loadingImg += "</div>";
+        //레이어 추가
+        $('body')
+            .append(mask)
+            .append(loadingImg)
+        //마스크의 높이와 너비로 전체 화면을 채운다.
+        $('#mask').css({
+            'width': maskWidth,
+            'height': maskHeight,
+            'opacity': '0.3'
+        });
+        //마스크 표시
+        $('#mask').show();
+        //로딩 이미지 표시
+        $('#loadingImg').show();
+    }
+
+    /** 오픈소스 참조 (로딩 중 화면 닫기) **/
+    function closeLoadingWithMask() {
+        $('#mask, #loadingImg').hide();
+        $('#mask, #loadingImg').empty();
+    }
+
     function initLocationColumnButtonListener(clickedBtn) {
         if (confirm("해당 위치 칼럼을 삭제 하시겠습니까?")) {
+            this.loadingWithMask();
             const locationInfoTable = document.querySelector(".location_info_table tbody");
             const params = 'id=' + clickedBtn.getAttribute("button-id");
             this.submitXMLHttpRequest(params);
-            locationInfoTable.removeChild(clickedBtn.closest("tr"))
+            locationInfoTable.removeChild(clickedBtn.closest("tr"));
         }
     }
 
     function submitXMLHttpRequest(params) {
         const xhr = new XMLHttpRequest();
         xhr.open("DELETE", '/location?' + params, true);
+        xhr.addEventListener("loadend", () => {
+            this.closeLoadingWithMask();
+        })
         xhr.send();
     }
+
+    class LocationTableController {
+        constructor() {
+            this.locationInfoTable = document.querySelector(".location_info_table");
+        }
+
+        initLocationTableController() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "/location", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            loadingWithMask();
+
+            xhr.addEventListener("loadend", evt => {
+                let status = evt.target.status;
+                closeLoadingWithMask();
+                if (status > 400 || status > 500) {
+                    alert('위치 정보 액세스에 실패하였습니다.')
+                } else {
+                    // TODO
+                    const responseJSON = JSON.parse(evt.target.responseText);
+                    const locationHistoryTemplate = document.querySelector("#location-history-template").innerHTML;
+                    const template = Handlebars.compile(locationHistoryTemplate);
+                    const templateHTML = template({locationHistoryList: responseJSON});
+                    this.locationInfoTable.innerHTML = templateHTML;
+                }
+            });
+            xhr.send();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const locationTableController = new LocationTableController();
+        locationTableController.initLocationTableController();
+    });
 </script>
 </body>
 </html>

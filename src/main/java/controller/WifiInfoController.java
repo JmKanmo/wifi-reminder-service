@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import domain.WifiInfo;
+import logger.LoggingController;
 import service.PublicWifiService;
 import util.Util;
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 public class WifiInfoController extends HttpServlet {
     private final PublicWifiService publicWifiService = new PublicWifiService();
@@ -44,7 +46,7 @@ public class WifiInfoController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(Util.gson.toJson(wifiInfoList));
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "WifiInfoController:doGet error occur => " + e);
         }
     }
 }

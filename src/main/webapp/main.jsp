@@ -90,7 +90,7 @@
             </li>
 
             <li>
-                <a href="/location">
+                <a href="/location-history.jsp">
                     위치 히스토리 목록
                 </a>
             </li>

@@ -2,12 +2,14 @@ package service;
 
 import com.google.gson.JsonObject;
 import domain.WifiInfo;
+import logger.LoggingController;
 import repository.ConnManager;
 import repository.DaoManager;
 import util.*;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class PublicWifiService {
@@ -31,7 +33,7 @@ public class PublicWifiService {
                                             JsonObject jsonObject = JsonUtil.parseStrToJsonObject(jsonStr);
                                             return jsonObject;
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            LoggingController.log(Level.INFO,"PublicWifiService:requestWifiApiService error occur => " + e);
                                             return null;
                                         }
                                     }, ThreadUtil.getThreadPoolExecutor()).thenApply(JsonUtil::parseJsonToWifiInfo)
@@ -49,7 +51,7 @@ public class PublicWifiService {
             });
             return search.get(ConfigUtil.getWorkConfig().getTimeUnit(), TimeUnit.SECONDS);
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "PublicWifiService:requestWifiApiService error occur => " + e);
             return 0;
         }
     }
@@ -64,7 +66,7 @@ public class PublicWifiService {
                 return new ArrayList<>();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO,"PublicWifiService:searchWifiNearestInfosByDB error occur => " + e);
             return new ArrayList<>();
         }
     }
@@ -89,7 +91,7 @@ public class PublicWifiService {
                                             JsonObject jsonObject = JsonUtil.parseStrToJsonObject(jsonStr);
                                             return jsonObject;
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            LoggingController.log(Level.INFO,"PublicWifiService:searchWifiNearestInfosDirectly error occur => " + e);
                                             return null;
                                         }
                                     }, ThreadUtil.getThreadPoolExecutor()).thenApply(JsonUtil::parseJsonToWifiInfo)
@@ -120,7 +122,7 @@ public class PublicWifiService {
                     })
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO,"PublicWifiService:searchWifiNearestInfosDirectly error occur => " + e);
             return new ArrayList<>();
         }
     }
@@ -133,6 +135,7 @@ public class PublicWifiService {
         try {
             return ConnManager.getConnection().isClosed() ? false : true;
         } catch (Exception e) {
+            LoggingController.log(Level.INFO,"PublicWifiService:checkDBConnection error occur => " + e);
             return false;
         }
     }

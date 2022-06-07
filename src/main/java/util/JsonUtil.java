@@ -5,10 +5,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import domain.LocationDate;
 import domain.WifiInfo;
+import logger.LoggingController;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class JsonUtil {
     public static JsonObject parseStrToJsonObject(String jsonStr) {
@@ -62,7 +64,7 @@ public class JsonUtil {
 
             return Optional.of(wifiInfoList);
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggingController.log(Level.INFO, "Jsonutil:parseJsonToWifiInfo => " + e);
             return Optional.empty();
         }
     }

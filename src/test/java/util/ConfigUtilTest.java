@@ -37,5 +37,11 @@ class ConfigUtilTest {
         assertNotNull(ConfigUtil.getDbPoolConfig().getStaticGlobal());
         assertNotNull(ConfigUtil.getDbPoolConfig().getMaxIdleTime());
         assertNotNull(ConfigUtil.getDbPoolConfig().getConnTimeOut());
+
+        assertNotNull(ConfigUtil.getLoggerConfig());
+        assertNotNull(ConfigUtil.getLoggerConfig().getPath());
+        assertNotNull(ConfigUtil.getLoggerConfig().getEncoding());
+        assertNotNull(ConfigUtil.getLoggerConfig().getLimit());
+        assertNotNull(ConfigUtil.getLoggerConfig().getCount());
     }
 }

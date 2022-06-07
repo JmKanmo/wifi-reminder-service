@@ -1,9 +1,6 @@
 package config;
 
-import config.dto.Api;
-import config.dto.Db;
-import config.dto.DbPool;
-import config.dto.Work;
+import config.dto.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -14,4 +11,5 @@ public class YamlConfig {
     private Work work;
     private Db db;
     private DbPool dbPool;
+    private Logger logger;
 }

@@ -18,11 +18,17 @@ db:
 
 dbPool:
   poolName: wifi-service-db-pool
-  maxPoolSize: 30
-  minPoolSize: 30
+  maxPoolSize: 20
+  minPoolSize: 20
   poolValidMinDelay: 1000
   maxIdleTime: 600
-  connTimeOut: 180
+  connTimeOut: 90
   staticGlobal: false
   useResetConnection: false
   registerJmxPool: true
+
+logger:
+  path: D:\study\toyproject\zerobase\wifi-alarm\logs\wifi-service.log
+  encoding: UTF-8
+  limit: 52428800
+  count: 100

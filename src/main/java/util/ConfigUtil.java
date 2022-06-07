@@ -1,11 +1,8 @@
 package util;
 
 import config.YamlConfig;
-import config.dto.Api;
+import config.dto.*;
 import config.YamlParser;
-import config.dto.Db;
-import config.dto.DbPool;
-import config.dto.Work;
 
 public class ConfigUtil {
     public static final YamlConfig yamlConfig = YamlParser.getParsedCrawlerConfig(YamlConfig.class).get();
@@ -24,5 +21,9 @@ public class ConfigUtil {
 
     public static DbPool getDbPoolConfig() {
         return yamlConfig.getDbPool();
+    }
+
+    public static Logger getLoggerConfig() {
+        return yamlConfig.getLogger();
     }
 }

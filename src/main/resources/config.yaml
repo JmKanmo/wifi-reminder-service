@@ -26,3 +26,9 @@ dbPool:
   staticGlobal: false
   useResetConnection: false
   registerJmxPool: true
+
+logger:
+  path: D:\study\toyproject\zerobase\wifi-alarm\logs\wifi-service.log
+  encoding: UTF-8
+  limit: 52428800
+  count: 100

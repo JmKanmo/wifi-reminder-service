@@ -1,6 +1,7 @@
 package controller;
 
 import service.LocHistoryService;
+import util.Util;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,9 +15,9 @@ public class LocationDateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/location-history.jsp");
-        req.setAttribute("location_history", locHistoryService.getLocationHistories());
-        requestDispatcher.forward(req, resp);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write(Util.gson.toJson(locHistoryService.getLocationHistories()));
     }
 
     @Override
