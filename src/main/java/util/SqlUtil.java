@@ -38,7 +38,7 @@ public class SqlUtil {
 
     public static final String DELETE_LOCATION_HISTORY_SQL = "DELETE FROM LOCATION_HISTORY WHERE id=?";
     public static final String SELECT_PAGE_WIFI_INFO_SQL = "SELECT round((6371 * acos(cos(radians(posX)) * cos(radians(?)) * cos(radians(?)\n" +
-            "    - radians(posY)) + sin(radians(posX)) * sin(radians(?)))) / 1000, 4) AS distance,\n" +
+            "    - radians(posY)) + sin(radians(posX)) * sin(radians(?)))), 4) AS distance,\n" +
             "       adminNumber,\n" +
             "       borough,\n" +
             "       wifiName,\n" +
