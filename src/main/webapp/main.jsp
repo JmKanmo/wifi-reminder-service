@@ -324,8 +324,8 @@
             locationButton.addEventListener("click", () => {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(position => {
-                        this.locationForm["x-pos-name"].value = position.coords.latitude;
-                        this.locationForm["y-pos-name"].value = position.coords.longitude;
+                        this.locationForm["x-pos-name"].value = position.coords.longitude;
+                        this.locationForm["y-pos-name"].value = position.coords.latitude;
                     })
                 } else {
                     alert('위치 기능이 현재 활성화되어있지 않습니다.');
@@ -347,8 +347,8 @@
                 if (!xPos || !yPos) {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(position => {
-                            this.locationForm["x-pos-name"].value = position.coords.latitude;
-                            this.locationForm["y-pos-name"].value = position.coords.longitude;
+                            this.locationForm["x-pos-name"].value = position.coords.longitude;
+                            this.locationForm["y-pos-name"].value = position.coords.latitude;
 
                             xPos = this.locationForm["x-pos-name"].value;
                             yPos = this.locationForm["y-pos-name"].value;
