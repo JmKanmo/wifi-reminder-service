@@ -74,6 +74,11 @@
             min-width: 100px;
             border: 0.1px solid #29e595;
         }
+
+        .more-button-container {
+            text-align: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -123,6 +128,10 @@
         <tr> wifi-info-template </tr>
         -->
     </table>
+
+    <div class="more-button-container" title="와이파이 정보 더보기">
+        <img src="./static/more_button.png">
+    </div>
 </div>
 
 <script id="wifi-info-template" type="text/x-handlebars-template">
@@ -221,6 +230,32 @@
     {{/each}}
 </script>
 
+<script id="more-wifi-info-template" type="text/x-handlebars-template">
+    {{#each wifiInfoList}}
+    <tr>
+        <td> {{distance}}</td>
+        <td> {{adminNumber}}</td>
+        <td> {{borough}}</td>
+        <td> {{wifiName}}</td>
+        <td> {{loadName}}</td>
+        <td> {{detailAddress}}</td>
+        <td> {{installPosition}}</td>
+        <td> {{installType}}</td>
+        <td> {{installAgency}}</td>
+        <td> {{serviceType}}</td>
+        <td> {{netType}}</td>
+        <td> {{installYear}}</td>
+        <td> {{inOutDoorType}}</td>
+        <td> {{wifiConnEnv}}</td>
+        {{#with locationDate}}
+        <td> {{posX}}</td>
+        <td> {{posY}}</td>
+        <td> {{dateTime}}</td>
+        {{/with}}
+    </tr>
+    {{/each}}
+</script>
+
 <!-- JS 정의 -->
 <script type="text/javascript">
     class WifiServiceFormController {
@@ -229,7 +264,9 @@
             this.locationButton = document.querySelector("#locationButton");
             this.wifiButton = document.querySelector("#wifiButton");
             this.wifiInfoTable = document.querySelector(".wifi_info_table");
+            this.moreSearchButton = document.querySelector(".more-button-container");
             this.flagNumber = 0;
+            this.wifiLoadCount = 20;
         }
 
         /** 오픈소스 참조 (로딩 중 화면 만들기) **/
@@ -270,6 +307,7 @@
             this.initWifiServiceTable();
             this.initLocationHistoryButton();
             this.initWifiButtonListener();
+            this.initMoreSearchButtonListener();
         }
 
         initWifiServiceTable() {
@@ -284,8 +322,6 @@
             const locationButton = this.locationButton;
 
             locationButton.addEventListener("click", () => {
-                let xhr = new XMLHttpRequest();
-
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(position => {
                         this.locationForm["x-pos-name"].value = position.coords.latitude;
@@ -293,6 +329,39 @@
                     })
                 } else {
                     alert('위치 기능이 현재 활성화되어있지 않습니다.');
+                }
+            });
+        }
+
+        initMoreSearchButtonListener() {
+            this.moreSearchButton.addEventListener("click", () => {
+                const formData = new FormData(this.locationForm);
+
+                let xPos = formData.get("x-pos-name");
+                let yPos = formData.get("y-pos-name");
+
+                const searchWifiTableBodyCount = document.querySelector(".wifi_info_table tbody").childElementCount - 1;
+                const offSetCount = searchWifiTableBodyCount == 0 ? 0 : searchWifiTableBodyCount + 1;
+                this.loadingWithMask();
+
+                if (!xPos || !yPos) {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(position => {
+                            this.locationForm["x-pos-name"].value = position.coords.latitude;
+                            this.locationForm["y-pos-name"].value = position.coords.longitude;
+
+                            xPos = this.locationForm["x-pos-name"].value;
+                            yPos = this.locationForm["y-pos-name"].value;
+
+                            const params = "xPos=" + xPos + "&"
+                                + "yPos=" + yPos + "&offSet=" + offSetCount + "&cnt=" + this.wifiLoadCount;
+                            this.submitXMLHttpRequestWifiInfo(params, true);
+                        })
+                    }
+                } else {
+                    const params = "xPos=" + xPos + "&"
+                        + "yPos=" + yPos + "&offSet=" + offSetCount + "&cnt=" + this.wifiLoadCount;
+                    this.submitXMLHttpRequestWifiInfo(params, true);
                 }
             });
         }
@@ -318,62 +387,89 @@
                             yPos = this.locationForm["y-pos-name"].value;
 
                             const params = "xPos=" + xPos + "&"
-                                + "yPos=" + yPos + "&offSet=0" + "&cnt=20";
-                            this.submitXMLHttpRequestWifiInfo(params);
+                                + "yPos=" + yPos + "&offSet=0" + "&cnt=" + this.wifiLoadCount;
+                            this.submitXMLHttpRequestWifiInfo(params, false);
                             this.submitXMLHttpRequestLocationInfo("xPos=" + xPos + "&yPos=" + yPos);
                         })
                     }
                 } else {
                     const params = "xPos=" + xPos + "&"
-                        + "yPos=" + yPos + "&offSet=0" + "&cnt=20";
-                    this.submitXMLHttpRequestWifiInfo(params);
+                        + "yPos=" + yPos + "&offSet=0" + "&cnt=" + this.wifiLoadCount;
+                    this.submitXMLHttpRequestWifiInfo(params, false);
                     this.submitXMLHttpRequestLocationInfo("xPos=" + xPos + "&yPos=" + yPos)
                 }
             });
         }
 
         submitXMLHttpRequestLocationInfo(params) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", '/location?' + params, true);
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", '/location?' + params, true);
 
-            xhr.addEventListener("loadend", event => {
-                let status = event.target.status;
-                if (status > 400 || status > 500) {
-                    alert('위치 정보가 데이터 베이스에 저장되지 않았습니다.')
-                }
+                xhr.addEventListener("loadend", event => {
+                    let status = event.target.status;
+                    if (status > 400 || status > 500) {
+                        alert('위치 정보가 데이터 베이스에 저장되지 않았습니다.')
+                    }
 
-                this.flagNumber++;
-                if (this.flagNumber >= 2) {
-                    this.closeLoadingWithMask();
-                    this.flagNumber = 0;
-                }
-            });
-            xhr.send();
+                    this.flagNumber++;
+                    if (this.flagNumber >= 2) {
+                        this.closeLoadingWithMask();
+                        this.flagNumber = 0;
+                    }
+                });
+                xhr.send();
+            } catch (e) {
+                this.closeLoadingWithMask();
+                this.flagNumber = 0;
+            }
         }
 
-        submitXMLHttpRequestWifiInfo(params) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", '/wifi?' + params, true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        submitXMLHttpRequestWifiInfo(params, append) {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", '/wifi?' + params, true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            xhr.addEventListener("loadend", event => {
-                const responseJSON = JSON.parse(event.target.responseText).map(wifi => {
-                    let temp = wifi;
-                    temp["distance"] = temp["distance"].toFixed(4);
-                    return temp;
+                xhr.addEventListener("loadend", event => {
+                    const responseJSON = JSON.parse(event.target.responseText).map(wifi => {
+                        let temp = wifi;
+                        temp["distance"] = temp["distance"].toFixed(4);
+                        return temp;
+                    });
+
+                    if (append === true) {
+                        const moreWifiInfoTemplate = document.querySelector("#more-wifi-info-template").innerHTML;
+                        const wifiInfoTableBody = document.querySelector(".wifi_info_table tbody");
+                        const template = Handlebars.compile(moreWifiInfoTemplate);
+                        const templateHTML = template({wifiInfoList: responseJSON});
+                        wifiInfoTableBody.innerHTML += templateHTML;
+                    } else {
+                        const wifiInfoTemplate = document.querySelector("#wifi-info-template").innerHTML;
+                        const template = Handlebars.compile(wifiInfoTemplate);
+                        const templateHTML = template({wifiInfoList: responseJSON});
+                        this.wifiInfoTable.innerHTML = templateHTML;
+                    }
+
+                    this.flagNumber++;
+
+                    if (append === true) {
+                        if (this.flagNumber >= 1) {
+                            this.closeLoadingWithMask();
+                            this.flagNumber = 0;
+                        }
+                    } else {
+                        if (this.flagNumber >= 2) {
+                            this.closeLoadingWithMask();
+                            this.flagNumber = 0;
+                        }
+                    }
                 });
-                const wifiInfoTemplate = document.querySelector("#wifi-info-template").innerHTML;
-                const template = Handlebars.compile(wifiInfoTemplate);
-                const templateHTML = template({wifiInfoList: responseJSON});
-                this.wifiInfoTable.innerHTML = templateHTML;
-
-                this.flagNumber++;
-                if (this.flagNumber >= 2) {
-                    this.closeLoadingWithMask();
-                    this.flagNumber = 0;
-                }
-            });
-            xhr.send();
+                xhr.send();
+            } catch (e) {
+                this.closeLoadingWithMask();
+                this.flagNumber = 0;
+            }
         }
     }
 

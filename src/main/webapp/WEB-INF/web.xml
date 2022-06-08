@@ -46,4 +46,9 @@
         <servlet-name>load-wifi</servlet-name>
         <url-pattern>/load-wifi</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
 </web-app>
