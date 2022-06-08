@@ -6,9 +6,10 @@
 
 기술 스택 
 - JAVA (jdk 1.8)
-- JDBC, Maria DB Pool
+- JDBC, connection pool, Maria DB
 - okhttp, gson 
 - yaml
+- HTML5, CSS3, VanilaJS
 - servlet, jsp, jstl
 - 서울시 공공 와이파이 Open API
 - lombok, junit 
