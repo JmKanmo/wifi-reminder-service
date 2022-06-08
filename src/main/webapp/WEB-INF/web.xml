@@ -51,4 +51,8 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
+
+    <listener>
+        <listener-class>listener.ApplicationContextListener</listener-class>
+    </listener>
 </web-app>

@@ -109,15 +109,15 @@
     </nav>
 
     <form class="location_form" action="/location" method="POST">
-        <label for="x-pos-name">LAT(X):</label>
-
-        <input type="number" id="x-pos-name" name="x-pos-name"
-               class="input_form" placeholder="x좌표를 입력하세요."/>
-
-        <label for="y-pos-name">LNT(Y):</label>
+        <label for="y-pos-name">LAT(Y):</label>
 
         <input type="number" id="y-pos-name" name="y-pos-name"
-               class="input_form" placeholder="y좌표를 입력하세요."/>
+               class="input_form" placeholder="y좌표(latitude) 입력"/>
+
+        <label for="x-pos-name">LON(X):</label>
+
+        <input type="number" id="x-pos-name" name="x-pos-name"
+               class="input_form" placeholder="x좌표(longitude) 입력"/>
 
         <button type="button" id="locationButton">내 위치 가져오기</button>
         <button type="button" id="wifiButton">근처 WIFI 정보 가져오기</button>
@@ -380,8 +380,8 @@
                 if (!xPos || !yPos) {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(position => {
-                            this.locationForm["x-pos-name"].value = position.coords.latitude;
-                            this.locationForm["y-pos-name"].value = position.coords.longitude;
+                            this.locationForm["x-pos-name"].value = position.coords.longitude;
+                            this.locationForm["y-pos-name"].value = position.coords.latitude;
 
                             xPos = this.locationForm["x-pos-name"].value;
                             yPos = this.locationForm["y-pos-name"].value;
